@@ -2041,22 +2041,20 @@ ${p.join(`
   if (numeros[0]) numeros[0].textContent = totalUnicas;
   if (numeros[1]) numeros[1].textContent = totalCapturas;
 };
+  window._ultimaListaFirebase = [];
     db.collection("fusoes").onSnapshot((snap) => {
+      window._ultimaListaFirebase = snap.docs.map(d => d.data());
     console.log("Pokédex partilhada:", snap.docs.map(d => d.data()));
     if (window.mostrarPokedexPartilhada) {
       window.mostrarPokedexPartilhada(snap.docs.map(d => d.data()));
     }
   });
-  // Vigia: se a caixa do Firebase for apagada pelo site antigo, volta a pôr
+// Vigia: se a Pokédex voltar a ficar vazia, volta a pôr os do Firebase
 setInterval(() => {
-  const zona = document.getElementById("firebase-pokedex");
-  if (!zona) {
-    console.log("A caixa sumiu, vou voltar a pôr...");
-    db.collection("fusoes").get().then(snap => {
-      if (window.mostrarPokedexPartilhada) {
-        window.mostrarPokedexPartilhada(snap.docs.map(d => d.data()));
-      }
-    });
+  const aindaVazia = document.body.textContent.includes("AINDA NÃO CAPTURASTE");
+  if (aindaVazia && window._ultimaListaFirebase && window._ultimaListaFirebase.length > 0) {
+    console.log("Site antigo apagou, vou voltar a pôr...");
+    window.mostrarPokedexPartilhada(window._ultimaListaFirebase);
   }
 }, 2000);
 </script>
