@@ -2051,6 +2051,18 @@ if (!grid) {
       window.mostrarPokedexPartilhada(snap.docs.map(d => d.data()));
     }
   });
+  // Vigia: se a caixa do Firebase for apagada pelo site antigo, volta a pôr
+setInterval(() => {
+  const zona = document.getElementById("firebase-pokedex");
+  if (!zona) {
+    console.log("A caixa sumiu, vou voltar a pôr...");
+    db.collection("fusoes").get().then(snap => {
+      if (window.mostrarPokedexPartilhada) {
+        window.mostrarPokedexPartilhada(snap.docs.map(d => d.data()));
+      }
+    });
+  }
+}, 2000);
 </script>
 </body>
 </html>
