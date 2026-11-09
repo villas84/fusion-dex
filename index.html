@@ -2023,15 +2023,19 @@ ${p.join(`
   }
 
   window.mostrarPokedexPartilhada = function(lista) {
-  let grid = document.querySelector("[data-pokedex], #pokedex, .pokedex-grid, [id*='pokedex' i], [class*='pokedex' i]");
-  if (!grid) {
-    const titulos = [...document.querySelectorAll("h1,h2,h3")].find(e => e.textContent.toLowerCase().includes("pokédex"));
-    grid = document.createElement("div");
-    grid.id = "firebase-pokedex";
-    grid.style.cssText = "display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:12px";
-    if (titulos && titulos.parentNode) titulos.parentNode.appendChild(grid);
-    else document.body.appendChild(grid);
-  }
+  let grid = document.getElementById("firebase-pokedex");
+if (!grid) {
+  grid = document.createElement("div");
+  grid.id = "firebase-pokedex";
+  grid.style.cssText = "display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:12px;padding:12px;border:2px solid #22c55e;border-radius:12px";
+  const titulo = document.createElement("h3");
+  titulo.textContent = "🌐 Pokédex Partilhada";
+  titulo.style.color = "white";
+  const zona = document.createElement("div");
+  zona.appendChild(titulo);
+  zona.appendChild(grid);
+  document.body.prepend(zona);
+}
   grid.innerHTML = lista.map(f => `
     <div style="border:1px solid #333;padding:12px;border-radius:12px;background:#1a1a2e;color:white">
       <b>${f.nomeFusao}</b><br>
