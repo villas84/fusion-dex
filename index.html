@@ -2021,6 +2021,21 @@ ${p.join(`
     }
     alert("Capturado! " + nomeFusao);
   }
+  window.mostrarPokedexPartilhada = function(lista) {
+  const grid = document.querySelector("[data-pokedex], #pokedex, .pokedex-grid");
+  if (!grid) {
+    console.log("Não encontrei a grelha da Pokédex para desenhar", lista);
+    return;
+  }
+  grid.innerHTML = lista.map(f => `
+    <div style="border:1px solid #333;padding:12px;border-radius:12px;background:#1a1a2e;color:white">
+      <b>${f.nomeFusao}</b><br>
+      ${f.headNome} + ${f.bodyNome}<br>
+      Capturado ${f.count}x<br>
+      Por: ${(f.capturadores || []).join(", ")}
+    </div>
+  `).join("");
+};
 
   db.collection("fusoes").onSnapshot((snap) => {
     console.log("Pokédex partilhada:", snap.docs.map(d => d.data()));
