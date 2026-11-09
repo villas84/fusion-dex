@@ -1962,6 +1962,8 @@ body{
   }
 }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
   <div id="root"></div>
@@ -1981,5 +1983,51 @@ ${p.join(`
 </script>
   <script>(function(){function m(a){var h=a.getAttribute("href");if(!h)return;try{var u=new URL(h,document.baseURI);if(((u.protocol==="http:"||u.protocol==="https:")&&u.host!==location.host)||u.protocol==="mailto:"||u.protocol==="tel:"||u.protocol==="sms:"){a.target="_blank";a.rel="noopener noreferrer";}}catch(e){}}function s(){document.querySelectorAll("a[href]").forEach(m);}if(document.readyState!=="loading"){s();}else{document.addEventListener("DOMContentLoaded",s);}document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[href]");if(a){m(a);}},true);})();</script>
   <script type="application/json" data-clippy-inline-media-manifest="1">{"version":1,"slots":[]}</script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA7bqByjPq874j6_danx45WK1P772I4dio",
+    authDomain: "fusion-dex.firebaseapp.com",
+    projectId: "fusion-dex",
+    storageBucket: "fusion-dex.firebasestorage.app",
+    messagingSenderId: "1053445647677",
+    appId: "1:1053445647677:web:45639a98b92bbba52b2954"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  let nick = localStorage.getItem("fusionDexNick");
+  if (!nick) {
+    nick = prompt("Qual é a tua alcunha?") || "Treinador";
+    localStorage.setItem("fusionDexNick", nick);
+  }
+
+  async function capturarNoFirebase(nomeFusao, headNome, bodyNome) {
+    const id = nomeFusao.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const ref = db.collection("fusoes").doc(id);
+    const doc = await ref.get();
+    if (!doc.exists) {
+      await ref.set({
+        nomeFusao: nomeFusao,
+        headNome: headNome,
+        bodyNome: bodyNome,
+        count: 1,
+        capturadores: [nick]
+      });
+    } else {
+      await ref.update({
+        count: firebase.firestore.FieldValue.increment(1),
+        capturadores: firebase.firestore.FieldValue.arrayUnion(nick)
+      });
+    }
+    alert("Capturado! " + nomeFusao);
+  }
+
+  db.collection("fusoes").onSnapshot((snap) => {
+    console.log("Pokédex partilhada:", snap.docs.map(d => d.data()));
+    if (window.mostrarPokedexPartilhada) {
+      window.mostrarPokedexPartilhada(snap.docs.map(d => d.data()));
+    }
+  });
+</script>
 </body>
 </html>
