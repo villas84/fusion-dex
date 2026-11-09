@@ -2023,33 +2023,23 @@ ${p.join(`
   }
 
   window.mostrarPokedexPartilhada = function(lista) {
-  let grid = document.getElementById("firebase-pokedex");
-if (!grid) {
-  grid = document.createElement("div");
-  grid.id = "firebase-pokedex";
-  grid.style.cssText = "display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:12px;padding:12px;border:2px solid #22c55e;border-radius:12px";
-  const titulo = document.createElement("h3");
-  titulo.textContent = "🌐 Pokédex Partilhada";
-  titulo.style.color = "white";
-  const zona = document.createElement("div");
-  zona.style.cssText = "position:sticky;top:0;z-index:9999;background:#111827;padding:10px;border-bottom:3px solid #22c55e";
-const btnMin = document.createElement("button");
-btnMin.textContent = "— Minimizar / Mostrar";
-btnMin.style.cssText = "margin-left:12px;padding:4px 10px;border-radius:8px;border:1px solid #22c55e;background:#111827;color:white;cursor:pointer";
-btnMin.onclick = () => { grid.style.display = grid.style.display === "none" ? "grid" : "none"; };
-titulo.appendChild(btnMin);
-  zona.appendChild(titulo);
-  zona.appendChild(grid);
-  document.body.prepend(zona);
-}
-  grid.innerHTML = lista.map(f => `
-    <div style="border:1px solid #333;padding:12px;border-radius:12px;background:#1a1a2e;color:white">
-      <b>${f.nomeFusao}</b><br>
-      ${f.headNome} + ${f.bodyNome}<br>
-      Capturado ${f.count}x<br>
-      Por: ${(f.capturadores || []).join(", ")}
-    </div>
-  `).join("");
+  const barraAntiga = document.getElementById("firebase-pokedex");
+  if (barraAntiga && barraAntiga.parentNode) barraAntiga.parentNode.remove();
+  const todos = [...document.querySelectorAll("div")];
+  const zonaVazia = todos.find(d => d.textContent.includes("AINDA NÃO CAPTURASTE"));
+  if (!zonaVazia) return;
+  zonaVazia.innerHTML = "";
+  lista.forEach(f => {
+    const card = document.createElement("div");
+    card.style.cssText = "border:1px solid #333;padding:16px;border-radius:16px;background:#1a1a2e;color:white;margin-bottom:12px;text-align:left";
+    card.innerHTML = `<b style="font-size:20px">${f.nomeFusao}</b><br>${f.headNome} + ${f.bodyNome}<br>Capturado ${f.count}x<br>Por: ${(f.capturadores || []).join(", ")}`;
+    zonaVazia.appendChild(card);
+  });
+  const totalUnicas = lista.length;
+  const totalCapturas = lista.reduce((s, f) => s + (f.count || 0), 0);
+  const numeros = [...document.querySelectorAll("div")].filter(d => d.textContent.trim() === "0");
+  if (numeros[0]) numeros[0].textContent = totalUnicas;
+  if (numeros[1]) numeros[1].textContent = totalCapturas;
 };
     db.collection("fusoes").onSnapshot((snap) => {
     console.log("Pokédex partilhada:", snap.docs.map(d => d.data()));
