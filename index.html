@@ -2032,6 +2032,7 @@ if (!grid) {
   titulo.textContent = "🌐 Pokédex Partilhada";
   titulo.style.color = "white";
   const zona = document.createElement("div");
+  zona.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:9999;background:#111827;padding:10px;max-height:320px;overflow:auto;border-bottom:3px solid #22c55e";
   zona.appendChild(titulo);
   zona.appendChild(grid);
   document.body.prepend(zona);
