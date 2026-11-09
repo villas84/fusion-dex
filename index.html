@@ -2021,11 +2021,16 @@ ${p.join(`
     }
     alert("Capturado! " + nomeFusao);
   }
+
   window.mostrarPokedexPartilhada = function(lista) {
-  const grid = document.querySelector("[data-pokedex], #pokedex, .pokedex-grid");
+  let grid = document.querySelector("[data-pokedex], #pokedex, .pokedex-grid, [id*='pokedex' i], [class*='pokedex' i]");
   if (!grid) {
-    console.log("Não encontrei a grelha da Pokédex para desenhar", lista);
-    return;
+    const titulos = [...document.querySelectorAll("h1,h2,h3")].find(e => e.textContent.toLowerCase().includes("pokédex"));
+    grid = document.createElement("div");
+    grid.id = "firebase-pokedex";
+    grid.style.cssText = "display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:12px";
+    if (titulos && titulos.parentNode) titulos.parentNode.appendChild(grid);
+    else document.body.appendChild(grid);
   }
   grid.innerHTML = lista.map(f => `
     <div style="border:1px solid #333;padding:12px;border-radius:12px;background:#1a1a2e;color:white">
@@ -2036,8 +2041,7 @@ ${p.join(`
     </div>
   `).join("");
 };
-
-  db.collection("fusoes").onSnapshot((snap) => {
+    db.collection("fusoes").onSnapshot((snap) => {
     console.log("Pokédex partilhada:", snap.docs.map(d => d.data()));
     if (window.mostrarPokedexPartilhada) {
       window.mostrarPokedexPartilhada(snap.docs.map(d => d.data()));
